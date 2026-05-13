@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>新春スクラッチクーポン</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Helvetica Neue", Arial, sans-serif;
+      background: #fff7ea;
+    }
+
+    .wrapper {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(255, 215, 120, 0.55) 0 10px, transparent 11px),
+        radial-gradient(circle at 88% 18%, rgba(255, 70, 70, 0.25) 0 18px, transparent 19px),
+        radial-gradient(circle at 15% 85%, rgba(210, 0, 35, 0.12) 0 24px, transparent 25px),
+        linear-gradient(135deg, #fff8e8 0%, #fff0d1 100%);
+      overflow: hidden;
+    }
+
+    .card {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 560px;
+      max-height: 400px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 250, 240, 0.98)),
+        repeating-linear-gradient(
+          45deg,
+          rgba(196, 0, 35, 0.04) 0,
+          rgba(196, 0, 35, 0.04) 8px,
+          transparent 8px,
+          transparent 16px
+        );
+      border-radius: 22px;
+      border: 3px solid #c40023;
+      box-shadow: 0 8px 22px rgba(88, 36, 0, 0.18);
+      padding: 16px 18px;
+      text-align: center;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      grid-template-rows: auto 1fr;
+      gap: 12px 18px;
+      overflow: hidden;
+    }
+
+    .card::before,
+    .card::after {
+      content: "✦";
+      position: absolute;
+      color: rgba(201, 154, 55, 0.35);
+      font-size: 64px;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .card::before {
+      top: -18px;
+      left: 12px;
+      transform: rotate(-12deg);
+    }
+
+    .card::after {
+      right: 14px;
+      bottom: -20px;
+      transform: rotate(16deg);
+    }
+
+    .header {
+      position: relative;
+      z-index: 1;
+      grid-column: 1 / 3;
+    }
+
+    .badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #c40023, #f04b3f);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-bottom: 5px;
+      letter-spacing: 0.04em;
+      box-shadow: 0 2px 0 rgba(120, 0, 20, 0.18);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      color: #2b1a0d;
+      line-height: 1.2;
+      letter-spacing: 0.04em;
+    }
+
+    .lead {
+      margin: 5px 0 0;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #6b4b2a;
+    }
+
+    .scratch-area {
+      position: relative;
+      z-index: 1;
+      width: 240px;
+      height: 180px;
+      margin: auto;
+      border-radius: 18px;
+      overflow: hidden;
+      background: linear-gradient(135deg, #fff4c7, #fff8e8);
+      border: 3px solid #d6a843;
+      box-shadow:
+        inset 0 0 0 2px rgba(255, 255, 255, 0.7),
+        0 4px 12px rgba(88, 36, 0, 0.14);
+      touch-action: none;
+      user-select: none;
+    }
+
+    .prize {
+      width: 100%;
+      height: 100%;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255, 220, 120, 0.55) 0 12px, transparent 13px),
+        radial-gradient(circle at 85% 80%, rgba(196, 0, 35, 0.12) 0 18px, transparent 19px),
+        linear-gradient(135deg, #fff8df, #fff0bd);
+    }
+
+    .prize-label {
+      margin: 0 0 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #a0001c;
+    }
+
+    .coupon-code {
+      width: 100%;
+      max-width: 180px;
+      border: 2px dashed #c40023;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #c40023;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      text-align: center;
+      padding: 10px 8px;
+      box-shadow: 0 2px 0 rgba(214, 168, 67, 0.25);
+    }
+
+    .prize-sub {
+      margin: 7px 0 0;
+      font-size: 11px;
+      color: #6b4b2a;
+    }
+
+    canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+    }
+
+    .control {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .status {
+      min-height: 40px;
+      margin: 0 0 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #2b1a0d;
+      font-weight: 800;
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 11px 12px;
+      cursor: pointer;
+      transition: transform 0.1s ease, opacity 0.2s ease;
+      letter-spacing: 0.02em;
+    }
+
+    .button:active {
+      transform: scale(0.98);
+    }
+
+    .copy-button {
+      background: linear-gradient(135deg, #c40023, #e43b35);
+      margin-bottom: 8px;
+      box-shadow: 0 3px 0 rgba(120, 0, 20, 0.25);
+    }
+
+    .copy-button:disabled {
+      background: #bdbdbd;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .reset-button {
+      background: linear-gradient(135deg, #b8841d, #d6a843);
+      box-shadow: 0 3px 0 rgba(120, 80, 10, 0.25);
+    }
+
+    .message {
+      min-height: 18px;
+      margin: 8px 0 0;
+      font-size: 12px;
+      font-weight: 800;
+      color: #008c5a;
+      line-height: 1.4;
+    }
+
+    .note {
+      margin: 6px 0 0;
+      font-size: 10px;
+      color: #8b6b45;
+      line-height: 1.4;
+    }
+
+    .ornament {
+      position: absolute;
+      z-index: 0;
+      pointer-events: none;
+      font-size: 22px;
+      opacity: 0.9;
+    }
+
+    .ornament.one {
+      left: 18px;
+      bottom: 18px;
+    }
+
+    .ornament.two {
+      right: 18px;
+      top: 18px;
+    }
+
+    @media (max-width: 420px) {
+      .wrapper {
+        padding: 8px;
+      }
+
+      .card {
+        max-width: 320px;
+        max-height: 480px;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .badge {
+        font-size: 10px;
+        padding: 4px 9px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .lead {
+        font-size: 11px;
+      }
+
+      .scratch-area {
+        width: 260px;
+        height: 170px;
+      }
+
+      .coupon-code {
+        font-size: 22px;
+        padding: 9px 8px;
+      }
+
+      .status {
+        min-height: 34px;
+        margin-bottom: 8px;
+        font-size: 12px;
+      }
+
+      .button {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+
+      .ornament.one {
+        left: 14px;
+        bottom: 12px;
+      }
+
+      .ornament.two {
+        right: 14px;
+        top: 12px;
+      }
+    }
+
+    @media (max-height: 420px) {
+      .card {
+        padding: 12px 16px;
+      }
+
+      .badge {
+        display: none;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      .lead {
+        font-size: 11px;
+      }
+
+      .scratch-area {
+        width: 230px;
+        height: 165px;
+      }
+
+      .note {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="ornament one">🎍</div>
+      <div class="ornament two">🌸</div>
+
+      <div class="header">
+        <div class="badge">新春限定・ハズレなし</div>
+        <h1>お年玉スクラッチ</h1>
+        <p class="lead">こすって新年限定クーポンをGET！</p>
+      </div>
+
+      <div class="scratch-area" id="scratchArea">
+        <div class="prize">
+          <p class="prize-label" id="prizeLabel">新春10%OFFクーポン</p>
+          <input class="coupon-code" id="couponCode" value="NEWYEAR10" readonly />
+          <p class="prize-sub">購入画面でご利用ください</p>
+        </div>
+        <canvas id="scratchCanvas"></canvas>
+      </div>
+
+      <div class="control">
+        <p class="status" id="statusText">
+          銀色の部分をこすって<br>お年玉クーポンを確認！
+        </p>
+
+        <button type="button" class="button copy-button" id="copyButton" disabled>
+          クーポンをコピー
+        </button>
+
+        <button type="button" class="button reset-button" id="resetButton">
+          もう一度スクラッチ
+        </button>
+
+        <p class="message" id="message"></p>
+        <p class="note">※これはテスト用コードです</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const prizes = [
+      { label: "新春5%OFFクーポン", code: "NEWYEAR05" },
+      { label: "新春10%OFFクーポン", code: "NEWYEAR10" },
+      { label: "送料無料クーポン", code: "HAPPYSHIP" },
+      { label: "お年玉500円OFF", code: "OTOSHIDAMA500" }
+    ];
+
+    const canvas = document.getElementById("scratchCanvas");
+    const scratchArea = document.getElementById("scratchArea");
+    const ctx = canvas.getContext("2d");
+
+    const prizeLabel = document.getElementById("prizeLabel");
+    const couponCode = document.getElementById("couponCode");
+    const copyButton = document.getElementById("copyButton");
+    const resetButton = document.getElementById("resetButton");
+    const statusText = document.getElementById("statusText");
+    const message = document.getElementById("message");
+
+    let isDrawing = false;
+    let isRevealed = false;
+    let selectedPrize = null;
+
+    function selectPrize() {
+      const index = Math.floor(Math.random() * prizes.length);
+      selectedPrize = prizes[index];
+      prizeLabel.innerText = selectedPrize.label;
+      couponCode.value = selectedPrize.code;
+    }
+
+    function resizeCanvas() {
+      const rect = scratchArea.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
+
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
+
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      drawCover(rect.width, rect.height);
+    }
+
+    function drawCover(width, height) {
+      isRevealed = false;
+      copyButton.disabled = true;
+      message.innerText = "";
+      statusText.innerHTML = "銀色の部分をこすって<br>お年玉クーポンを確認！";
+
+      ctx.globalCompositeOperation = "source-over";
+
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, "#cfcfcf");
+      gradient.addColorStop(0.45, "#f7f7f7");
+      gradient.addColorStop(1, "#a9a9a9");
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = "rgba(255, 255, 255, 0.35)";
+      for (let i = -width; i < width * 2; i += 24) {
+        ctx.beginPath();
+        ctx.moveTo(i, 0);
+        ctx.lineTo(i + 16, 0);
+        ctx.lineTo(i + width, height);
+        ctx.lineTo(i + width - 16, height);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      ctx.fillStyle = "rgba(196, 0, 35, 0.95)";
+      ctx.font = "bold 18px -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("こすって開運！", width / 2, height / 2 - 10);
+
+      ctx.fillStyle = "#777777";
+      ctx.font = "bold 13px -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic', Arial";
+      ctx.fillText("SCRATCH", width / 2, height / 2 + 18);
+    }
+
+    function getPointerPosition(event) {
+      const rect = canvas.getBoundingClientRect();
+
+      const clientX = event.touches ? event.touches[0].clientX : event.clientX;
+      const clientY = event.touches ? event.touches[0].clientY : event.clientY;
+
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function scratch(x, y) {
+      if (isRevealed) return;
+
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.beginPath();
+      ctx.arc(x, y, 18, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function startScratch(event) {
+      event.preventDefault();
+      isDrawing = true;
+      const pos = getPointerPosition(event);
+      scratch(pos.x, pos.y);
+      checkRevealRate();
+    }
+
+    function moveScratch(event) {
+      if (!isDrawing) return;
+      event.preventDefault();
+
+      const pos = getPointerPosition(event);
+      scratch(pos.x, pos.y);
+      checkRevealRate();
+    }
+
+    function endScratch() {
+      isDrawing = false;
+    }
+
+    function checkRevealRate() {
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const pixels = imageData.data;
+      let transparentPixels = 0;
+
+      for (let i = 3; i < pixels.length; i += 4) {
+        if (pixels[i] < 128) {
+          transparentPixels++;
+        }
+      }
+
+      const totalPixels = canvas.width * canvas.height;
+      const revealRate = transparentPixels / totalPixels;
+
+      if (revealRate > 0.45 && !isRevealed) {
+        revealAll();
+      }
+    }
+
+    function revealAll() {
+      isRevealed = true;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      copyButton.disabled = false;
+      statusText.innerHTML = selectedPrize.label + "<br>が当たりました！";
+      message.innerText = "クーポンをコピーできます";
+    }
+
+    async function copyCoupon() {
+      if (!isRevealed) {
+        message.innerText = "先にスクラッチしてください";
+        return;
+      }
+
+      const text = selectedPrize.code;
+
+      try {
+        await navigator.clipboard.writeText(text);
+        message.innerText = "コピーしました！";
+      } catch (error) {
+        couponCode.focus();
+        couponCode.select();
+        couponCode.setSelectionRange(0, 99999);
+
+        try {
+          const result = document.execCommand("copy");
+          message.innerText = result ? "コピーしました！" : "長押ししてコピーしてください";
+        } catch (fallbackError) {
+          message.innerText = "長押ししてコピーしてください";
+        }
+      }
+    }
+
+    function resetScratch() {
+      selectPrize();
+      resizeCanvas();
+    }
+
+    canvas.addEventListener("mousedown", startScratch);
+    canvas.addEventListener("mousemove", moveScratch);
+    window.addEventListener("mouseup", endScratch);
+
+    canvas.addEventListener("touchstart", startScratch, { passive: false });
+    canvas.addEventListener("touchmove", moveScratch, { passive: false });
+    window.addEventListener("touchend", endScratch);
+
+    copyButton.addEventListener("click", copyCoupon);
+    resetButton.addEventListener("click", resetScratch);
+
+    window.addEventListener("resize", function () {
+      resizeCanvas();
+    });
+
+    selectPrize();
+    resizeCanvas();
+  </script>
+</body>
+</html>
