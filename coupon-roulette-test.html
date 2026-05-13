@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>クーポンルーレット テスト</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff7ec;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .roulette-wrapper {
+      width: 100%;
+      min-height: 420px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: #fff7ec;
+    }
+
+    .roulette-card {
+      width: 100%;
+      max-width: 320px;
+      box-sizing: border-box;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 22px 18px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      border: 2px solid #ffb84d;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #ff7a00;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 4px 0 8px;
+      font-size: 23px;
+      color: #222222;
+    }
+
+    .lead {
+      margin: 0 0 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #555555;
+    }
+
+    .roulette-box {
+      position: relative;
+      width: 210px;
+      height: 210px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #ffe1a8 0deg 60deg,
+        #ffd2d2 60deg 120deg,
+        #d9f2ff 120deg 180deg,
+        #e1ffd8 180deg 240deg,
+        #f2ddff 240deg 300deg,
+        #fff0bf 300deg 360deg
+      );
+      border: 6px solid #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+      transition: transform 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .roulette-box::after {
+      content: "";
+      position: absolute;
+      inset: 50%;
+      width: 58px;
+      height: 58px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+    }
+
+    .pointer {
+      width: 0;
+      height: 0;
+      margin: 0 auto -8px;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 22px solid #ff4d00;
+      position: relative;
+      z-index: 2;
+    }
+
+    .coupon-label {
+      margin: 10px 0 6px;
+      font-size: 13px;
+      color: #777777;
+    }
+
+    .coupon-code {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 8px auto 12px;
+      padding: 12px;
+      border: 2px dashed #ff7a00;
+      border-radius: 10px;
+      background: #fff3df;
+      color: #d95f00;
+      font-size: 23px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .button {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 13px 14px;
+      cursor: pointer;
+      transition: transform 0.1s ease, opacity 0.2s ease;
+    }
+
+    .button:active {
+      transform: scale(0.98);
+    }
+
+    .spin-button {
+      background: #ff7a00;
+      margin-bottom: 8px;
+    }
+
+    .copy-button {
+      background: #222222;
+    }
+
+    .copy-button:disabled {
+      background: #bdbdbd;
+      cursor: not-allowed;
+    }
+
+    .message {
+      min-height: 20px;
+      margin: 10px 0 0;
+      font-size: 13px;
+      font-weight: bold;
+      color: #00a66a;
+    }
+
+    .note {
+      margin: 8px 0 0;
+      font-size: 11px;
+      color: #888888;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="roulette-wrapper">
+    <div class="roulette-card">
+      <div class="badge">ハズレなし</div>
+
+      <h2>クーポンルーレット</h2>
+
+      <p class="lead">
+        ルーレットを回して、表示されたクーポンコードをコピーしてください。
+      </p>
+
+      <div class="pointer"></div>
+      <div class="roulette-box" id="rouletteBox"></div>
+
+      <button type="button" class="button spin-button" id="spinButton">
+        ルーレットを回す
+      </button>
+
+      <p class="coupon-label">選ばれたクーポン</p>
+
+      <input
+        class="coupon-code"
+        id="couponCode"
+        value="---"
+        readonly
+      />
+
+      <button type="button" class="button copy-button" id="copyButton" disabled>
+        このクーポンをコピー
+      </button>
+
+      <p class="message" id="message"></p>
+
+      <p class="note">
+        ※これはテスト用です。実際のクーポンコードではありません。
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const coupons = [
+      { label: "5%OFF", code: "TEST05" },
+      { label: "10%OFF", code: "TEST10" },
+      { label: "送料無料", code: "FREESHIP" },
+      { label: "500円OFF", code: "OFF500" },
+      { label: "15%OFF", code: "TEST15" },
+      { label: "20%OFF", code: "TEST20" }
+    ];
+
+    const rouletteBox = document.getElementById("rouletteBox");
+    const spinButton = document.getElementById("spinButton");
+    const copyButton = document.getElementById("copyButton");
+    const couponCodeInput = document.getElementById("couponCode");
+    const message = document.getElementById("message");
+
+    let currentRotation = 0;
+    let selectedCoupon = null;
+    let isSpinning = false;
+
+    spinButton.addEventListener("click", function () {
+      if (isSpinning) return;
+
+      isSpinning = true;
+      selectedCoupon = null;
+      message.innerText = "";
+      couponCodeInput.value = "抽選中...";
+      copyButton.disabled = true;
+      spinButton.innerText = "抽選中...";
+
+      const selectedIndex = Math.floor(Math.random() * coupons.length);
+      const selected = coupons[selectedIndex];
+
+      const segmentAngle = 360 / coupons.length;
+      const targetAngle = selectedIndex * segmentAngle + segmentAngle / 2;
+
+      const extraSpins = 5 * 360;
+      const pointerOffset = 270;
+      const finalRotation = extraSpins + pointerOffset - targetAngle;
+
+      currentRotation += finalRotation;
+
+      rouletteBox.style.transform = `rotate(${currentRotation}deg)`;
+
+      setTimeout(function () {
+        selectedCoupon = selected;
+        couponCodeInput.value = selected.code;
+        message.innerText = `${selected.label}クーポンが当たりました！`;
+        copyButton.disabled = false;
+        spinButton.innerText = "もう一度回す";
+        isSpinning = false;
+      }, 2300);
+    });
+
+    copyButton.addEventListener("click", async function () {
+      if (!selectedCoupon) {
+        message.innerText = "先にルーレットを回してください";
+        return;
+      }
+
+      const couponText = selectedCoupon.code;
+
+      try {
+        await navigator.clipboard.writeText(couponText);
+        message.innerText = "コピーしました！";
+        console.log("navigator.clipboardでコピー成功:", couponText);
+      } catch (error) {
+        console.warn("navigator.clipboardでコピー失敗:", error);
+
+        couponCodeInput.focus();
+        couponCodeInput.select();
+        couponCodeInput.setSelectionRange(0, 99999);
+
+        try {
+          const result = document.execCommand("copy");
+
+          if (result) {
+            message.innerText = "コピーしました！";
+            console.log("execCommandでコピー成功:", couponText);
+          } else {
+            message.innerText = "コピーできませんでした。コードを長押ししてコピーしてください。";
+          }
+        } catch (fallbackError) {
+          message.innerText = "コピーできませんでした。コードを長押ししてコピーしてください。";
+          console.error("fallbackでもコピー失敗:", fallbackError);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
