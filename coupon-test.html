@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>クーポンコピー テスト</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff7ec;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .coupon-popup-test {
+      width: 100%;
+      min-height: 320px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: #fff7ec;
+    }
+
+    .coupon-card {
+      width: 100%;
+      max-width: 280px;
+      box-sizing: border-box;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 22px 18px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      border: 2px solid #ffb84d;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #ff7a00;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 4px 0 10px;
+      font-size: 24px;
+      color: #222222;
+    }
+
+    .lead {
+      margin: 0 0 14px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #555555;
+    }
+
+    .coupon-code {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 12px auto;
+      padding: 12px;
+      border: 2px dashed #ff7a00;
+      border-radius: 10px;
+      background: #fff3df;
+      color: #d95f00;
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+
+    .copy-button {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      background: #ff7a00;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: bold;
+      padding: 13px 14px;
+      cursor: pointer;
+    }
+
+    .copy-message {
+      min-height: 20px;
+      margin: 10px 0 0;
+      font-size: 13px;
+      font-weight: bold;
+      color: #00a66a;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="coupon-popup-test">
+    <div class="coupon-card">
+      <div class="badge">期間限定クーポン</div>
+
+      <h2>今だけ10%OFF</h2>
+
+      <p class="lead">
+        下記クーポンコードをコピーして、購入画面でご利用ください。
+      </p>
+
+      <input class="coupon-code" id="couponCode" value="TEST10" readonly>
+
+      <button type="button" class="copy-button" id="copyButton">
+        クーポンコードをコピー
+      </button>
+
+      <p class="copy-message" id="copyMessage"></p>
+    </div>
+  </div>
+
+  <script>
+    const button = document.getElementById("copyButton");
+    const input = document.getElementById("couponCode");
+    const message = document.getElementById("copyMessage");
+
+    button.addEventListener("click", async function () {
+      const couponText = input.value;
+
+      try {
+        await navigator.clipboard.writeText(couponText);
+        message.innerText = "コピーしました！";
+        console.log("navigator.clipboardでコピー成功:", couponText);
+      } catch (error) {
+        console.warn("navigator.clipboardでコピー失敗:", error);
+
+        input.focus();
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        try {
+          const result = document.execCommand("copy");
+
+          if (result) {
+            message.innerText = "コピーしました！";
+            console.log("execCommandでコピー成功:", couponText);
+          } else {
+            message.innerText = "コピーできませんでした";
+            console.error("execCommandでコピー失敗");
+          }
+        } catch (fallbackError) {
+          message.innerText = "コピーできませんでした";
+          console.error("fallbackでもコピー失敗:", fallbackError);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
