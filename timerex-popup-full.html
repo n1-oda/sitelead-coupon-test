@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>TimeRex日程調整</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Helvetica Neue", Arial, sans-serif;
+      background: #f4f8ff;
+      color: #1f2937;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .page {
+      width: 100%;
+      min-height: 100vh;
+      padding: 24px 16px;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(47, 128, 237, 0.12) 0 120px, transparent 121px),
+        radial-gradient(circle at 90% 20%, rgba(86, 204, 242, 0.16) 0 150px, transparent 151px),
+        linear-gradient(135deg, #eef7ff 0%, #ffffff 100%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: #2f80ed;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+      color: #102a43;
+    }
+
+    .lead {
+      margin: 10px auto 0;
+      max-width: 640px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #52616b;
+    }
+
+    .card {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 20px;
+      box-shadow: 0 12px 32px rgba(15, 72, 130, 0.14);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      background: linear-gradient(135deg, #2f80ed, #56ccf2);
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .timerex-wrap {
+      width: 100%;
+      min-height: 760px;
+      background: #ffffff;
+      padding: 0;
+      overflow: visible;
+    }
+
+    #timerex_calendar {
+      width: 100%;
+      min-height: 760px;
+    }
+
+    .footer {
+      padding: 14px 16px 18px;
+      text-align: center;
+      background: #f8fbff;
+      border-top: 1px solid #e6f0ff;
+      font-size: 13px;
+      color: #52616b;
+      line-height: 1.6;
+    }
+
+    .fallback-link {
+      display: inline-block;
+      margin-left: 4px;
+      color: #2f80ed;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .fallback-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 16px 10px;
+      }
+
+      h1 {
+        font-size: 22px;
+      }
+
+      .lead {
+        font-size: 13px;
+      }
+
+      .card {
+        border-radius: 16px;
+      }
+
+      .card-header {
+        padding: 12px;
+      }
+
+      .card-title {
+        font-size: 14px;
+      }
+
+      .timerex-wrap {
+        min-height: 820px;
+      }
+
+      #timerex_calendar {
+        min-height: 820px;
+      }
+
+      .footer {
+        font-size: 12px;
+        padding: 12px 10px 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <div class="container">
+      <header class="header">
+        <div class="badge">かんたん日程調整</div>
+        <h1>ご都合のよい日時をお選びください</h1>
+        <p class="lead">
+          カレンダーから空いている日時を選択し、そのまま日程調整を完了できます。
+        </p>
+      </header>
+
+      <section class="card">
+        <div class="card-header">
+          <p class="card-title">空き日時を選択してください</p>
+        </div>
+
+        <div class="timerex-wrap">
+          <!-- Begin TimeRex Widget -->
+          <div
+            id="timerex_calendar"
+            data-url="https://timerex.net/s/k_nakayama_2e12/41974454"
+          ></div>
+
+          <script id="timerex_embed" src="https://asset.timerex.net/js/embed.js"></script>
+
+          <script type="text/javascript">
+            window.addEventListener("load", function () {
+              if (typeof TimerexCalendar === "function") {
+                TimerexCalendar();
+              }
+            });
+          </script>
+          <!-- End TimeRex Widget -->
+        </div>
+
+        <div class="footer">
+          カレンダーが表示されない場合は
+          <a
+            class="fallback-link"
+            href="https://timerex.net/s/k_nakayama_2e12/41974454"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            こちらから日程調整
+          </a>
+          してください。
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
